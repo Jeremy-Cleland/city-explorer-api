@@ -1,47 +1,78 @@
 "use strict";
 
-// *** require dependencies ***
+console.log("Yasss our first server!");
 
+// **** REQUIRES ****
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 
-// *** Once express is in we need to use it - per express docS
-// *** App is the express server ***
+// *** FOR LAB DON'T FORGET TO REQUIRE YOUR STARTER JSON FILE ***
 
+let data = require("./data/weather.json");
+
+// **** Once express is in we need to use it - per express docs
+// *** app === server
 const app = express();
-// *** cors is a middleware that allows us to use cors in our app ***
+
+// *** cors is middleware - security guard that allows us to share resources across the internet **
 app.use(cors());
+
 // *** DEFINE A PORT FOR MY SERVER TO RUN ON ***
+const PORT = process.env.PORT || 3001;
 
-const PORT = process.env.PORT || 3002;
+// **** ENDPOINTS ****
 
-//*** ENDPOINTS ***/
-app.get("/"),
-  (request, response) => {
-    response.status(200).send("Welcome to my server");
-  };
+// *** Base endpoint - proof of life
+// ** 1st arg - endpoint in quotes
+// ** 2nd arg - callback which will execute when someone hits that point
 
-app.get("/hello"),
-  (request, response) => {
-    console.log(request.query);
+// *** Callback function - 2 parameters: request, response (req,res)
 
-    let firstName = request.query.firstName;
-    let lastName = request.query.lastName;
+app.get("/", (request, response) => {
+  response.status(200).send("Welcome to my server");
+});
+app.get("/hello", (request, response) => {
+  console.log(request.query);
 
-    response.status(200).send(`Hello ${firstName} ${lastName}`);
-  };
+  let firstName = request.query.firstName;
+  let lastName = request.query.lastName;
+
+  response.status(200).send(`Hello ${firstName} ${lastName}`);
+});
+
+app.get("/weather", (req, res, next) => {
+  try {
+    let lat = req.query.lat;
+    let lon = req.query.lon;
+    let searchQuery = req.query.city_name;
+
+    let dataToGroom = data.find((city) => city.city_name === searchQuery);
+    let dataToSend = new Forcast(dataToGroom);
+    console.log(dataToSend);
+    res.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// *** CLASS TO GROOM BULKY DATA ***
+
+class Forcast {
+  constructor(city) {
+    this.date = city.data[0].valid_date;
+    this.description = city.data[0].weather.description;
+  }
+}
 
 // *** CATCH ALL ENDPOINT ***
-app.use("*", (request, response) => {
-  response.status(404).send("Sorry, that route does not exist");
+app.get("*", (request, response) => {
+  response.status(404).send("Sorry, thatd route does not exist");
 });
 
 // *** ERROR HANDLING ***
 app.use((error, request, response, next) => {
-  response
-    .status(500)
-    .send("Sorry, something went wrong on our end. Please try again later");
+  response.status(500).send(error.message);
 });
 
 // *** SERVER START ***
