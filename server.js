@@ -16,31 +16,32 @@ app.get("/", (request, response) => {
   response.status(200).send("Welcome to my server");
 });
 
+// weather?lat=value&lon=value&searchQuery=value
+
 app.get("/weather", (request, response, next) => {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
-    let searchQuery = request.query.city_name;
+    let cityName = request.query.searchQuery;
 
-    let dataToGroom = data.find((city) => city.city_name === searchQuery);
-    let dataToSend = new Forcast(dataToGroom, lat, lon);
-    console.log(dataToSend);
-    response.status(200).send(dataToSend);
+    // TODO find the city in the json
+
+    let city = data.find(
+      (city) => city.city_name.toLowerCase() === cityName.toLowerCase()
+    );
+
+    let weatherData = city.data.map((dayObj) => new Forcast(dayObj));
+
+    response.status(200).send(city);
   } catch (error) {
     next(error);
   }
 });
 
 class Forcast {
-  constructor(city, lat, lon) {
-    this.dateOne = city.data[0].valid_date;
-    this.descriptionOne = city.data[0].weather.description;
-    this.dateTwo = city.data[1].valid_date;
-    this.descriptionTwo = city.data[1].weather.description;
-    this.dateThree = city.data[2].valid_date;
-    this.descriptionThree = city.data[2].weather.description;
-    this.lat = lat;
-    this.lon = lon;
+  constructor(dayObj) {
+    this.dateOne = dayObj.valid_date;
+    this.description = dayObj.weather.description;
   }
 }
 
