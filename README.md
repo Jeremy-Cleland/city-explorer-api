@@ -9,15 +9,17 @@ Netlify:
 
 ## Overview
 
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+As a user of City Explorer, I want to enter the name of a location so that I can see the exact latitude and longitude of that location.
 
-## Getting Started
+As a user, I want clear messages if something goes wrong so I know if I need to make any changes or try again in a different manner.
 
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+As a user, I want to see a map of the city so that I can see the layout of the area I want to explore.
 
 ## Architecture
 
 ![Architecture Process](/Architecture.png)
+
+![Architecture Process](/Architecture-2.png)
 
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
@@ -25,9 +27,7 @@ Create-React-App, Axios and react-bootstrap
 
 ## Change Log
 
-<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
-
-01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
+<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example: -->
 
 01-16-2023 4:59pm - Application has GET route for the location resource and returns lat/lot and imagery.
 
@@ -39,14 +39,12 @@ Create-React-App, Axios and react-bootstrap
 
 Time Estimates
 
-For each of the lab features, make an estimate of the time it will take you to complete the feature, and record your start and finish times for that feature:
+Name of feature: **synchronous code, and APIs**
 
-Name of feature: **\*\***\*\***\*\***\_\_\_\_**\*\***\*\***\*\***
+Estimate of time needed to complete: **3 hours**
 
-Estimate of time needed to complete: **\_**
+Start time: **3:30**
 
-Start time: **\_**
+Finish time: **6:30**
 
-Finish time: **\_**
-
-Actual time needed to complete: **\_**
+Actual time needed to complete: **3 hours**
