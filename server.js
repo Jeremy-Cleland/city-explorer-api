@@ -45,9 +45,9 @@ app.get("/weather", (req, res, next) => {
   try {
     let lat = req.query.lat;
     let lon = req.query.lon;
-    let searchQuery = req.query.city_name;
+    let searchQuery = req.query.city;
 
-    let dataToGroom = data.find((city) => city.city_name === searchQuery);
+    let dataToGroom = data.find((city) => city.city === searchQuery);
     let dataToSend = new Forcast(dataToGroom);
     console.log(dataToSend);
     res.status(200).send(dataToSend);
