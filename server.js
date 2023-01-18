@@ -60,8 +60,14 @@ app.get("/weather", (req, res, next) => {
 
 class Forcast {
   constructor(city) {
-    this.date = city.data[0].valid_date;
-    this.description = city.data[0].weather.description;
+    this.dateOne = city.data[0].valid_date;
+    this.descriptionOne = city.data[0].weather.description;
+    this.dateTwo = city.data[1].valid_date;
+    this.descriptionTwo = city.data[1].weather.description;
+    this.dateThree = city.data[2].valid_date;
+    this.descriptionThree = city.data[2].weather.description;
+    this.lat = lat;
+    this.lon = lon;
   }
 }
 
