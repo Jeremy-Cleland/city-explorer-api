@@ -1,41 +1,26 @@
-"use strict";
+'use strict';
 
 // **** REQUIRES ****
 
-const express = require("express");
-require("dotenv").config();
-const cors = require("cors");
+const express = require('express');
+require('dotenv').config();
+const cors = require('cors');
 
 // **** APP DECLARATION ****
 const app = express();
-const axios = require("axios");
+const axios = require('axios');
 
 app.use(cors());
 
 const PORT = process.env.PORT || 3002;
 
-app.get("/", (request, response) => {
-  response.status(200).send("Welcome to my server");
+app.get('/', (request, response) => {
+  response.status(200).send('Welcome to my server');
 });
 
 // **** ROUTES ****
-app.get("/movies", async (request, response, next) => {
-  try {
-    let city = request.query.city;
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city}`;
-    ç;
 
-    let dataToGroom = await axios.get(url);
-    dataToGroom = dataToGroom.data.results;
-
-    let movieData = dataToGroom.map((movie) => new Movie(movie));
-    response.status(200).send(movieData);
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.get("/weather", async (request, response, next) => {
+app.get('/weather', async (request, response, next) => {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
@@ -51,6 +36,20 @@ app.get("/weather", async (request, response, next) => {
   }
 });
 
+app.get('/movies', async (request, response, next) => {
+  try {
+    let searchQuery = request.query.searchQuery;
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`;
+    let dataToGroom = await axios.get(url);
+    dataToGroom = dataToGroom.data.results;
+
+    let movieData = dataToGroom.map((movie) => new Movie(movie));
+    response.status(200).send(movieData);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // ***** Class to groom bulky data
 class Movie {
   constructor(movieObj) {
@@ -58,7 +57,7 @@ class Movie {
     this.overview = movieObj.overview;
     this.vote_average = movieObj.vote_average;
     this.vote_count = movieObj.vote_count;
-    this.image_url = "https://image.tmdb.org/t/p/w500" + movieObj.poster_path;
+    this.image_url = 'https://image.tmdb.org/t/p/w500' + movieObj.poster_path;
     this.popularity = movieObj.popularity;
     this.release_date = movieObj.release_date;
   }
@@ -74,8 +73,8 @@ class Forecast {
 }
 
 // **** ERROR HANDLERS ****
-app.use("*", (request, response) => {
-  response.status(404).send("Sorry, that route does not exist");
+app.use('*', (request, response) => {
+  response.status(404).send('Sorry, that route does not exist');
 });
 
 app.use((error, request, response, next) => {
