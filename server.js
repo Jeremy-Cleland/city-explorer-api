@@ -6,55 +6,81 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 
-let data = require("./data/weather.json");
-
+// **** APP DECLARATION ****
 const app = express();
+const axios = require("axios");
 
 app.use(cors());
+
 const PORT = process.env.PORT || 3002;
 
 app.get("/", (request, response) => {
   response.status(200).send("Welcome to my server");
 });
 
-// weather?lat=value&lon=value&searchQuery=value
-// *** DEFINE WEATHER ENDPOINT WITH THE FOLLOWING QUERIES - lat, lon, searchQuery
-app.get("/weather", (request, response, next) => {
+// **** ROUTES ****
+app.get("/movies", async (request, response, next) => {
   try {
-    let lat = request.query.lat;
-    let lon = request.query.lon;
-    let cityName = request.query.searchQuery;
+    let city = request.query.city;
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city}`;
+    let movieData = await axios.get(url);
 
-    console.log(request.query);
-
-    let city = data.find(
-      (city) => city.city_name.toLowerCase() === cityName.toLowerCase()
-    );
-
-    let weatherData = city.data.map((dayObj) => new Forecast(dayObj));
-
-    response.status(200).send(weatherData);
+    let groomMovie = movieData.data.results;
+    let dataToSend = groomMovie.map((movie) => new Movie(movie));
+    response.status(200).send(dataToSend);
   } catch (error) {
     next(error);
   }
 });
-// **** FORECAST CLASS TO GROOM BULKY DATA ****
+
+app.get("/weather", async (request, response, next) => {
+  try {
+    let lat = request.query.lat;
+    let lon = request.query.lon;
+    let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=5&units=I`;
+    let weatherData = await axios.get(url);
+
+    let groomWeather = weatherData.data.data;
+
+    let dataToSend = groomWeather.map((day) => new Forecast(day));
+
+    response.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ***** Class to groom bulky data
+class Movie {
+  constructor(movieObj) {
+    this.title = movieObj.title;
+    this.overview = movieObj.overview;
+    this.vote_average = movieObj.vote_average;
+    this.vote_count = movieObj.vote_count;
+    this.popularity = movieObj.popularity;
+    this.release_date = movieObj.release_date;
+  }
+}
+
 class Forecast {
   constructor(dayObj) {
     this.date = dayObj.valid_date;
+    this.high_temp = dayObj.high_temp;
+    this.low_temp = dayObj.low_temp;
     this.description = dayObj.weather.description;
   }
 }
 
-// **** CATCH ALL ENDPOINT - NEEDS TO BE YOUR LAST DEFINED ENDPOINT ****
-app.get("*", (request, response) => {
-  response.status(404).send("This page does not exist");
+// **** ERROR HANDLERS ****
+app.use("*", (request, response) => {
+  response.status(404).send("Sorry, that route does not exist");
 });
 
-// **** ERROR HANDLING - PLUG AND PLAY CODE FROM EXPRESS DOCS ****
 app.use((error, request, response, next) => {
-  response.status(500).send(error.message);
+  response.status(500).send(error);
 });
 
-// ***** SERVER START ******
-app.listen(PORT, () => console.log(`We are running on port: ${PORT}`));
+// *** START SERVER ***
+app.listen(PORT, () => {
+  console.log(`Listening on PORT ${PORT}`);
+});
