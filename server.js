@@ -8,6 +8,7 @@ const cors = require("cors");
 
 // **** APP DECLARATION ****
 const app = express();
+const axios = require("axios");
 
 app.use(cors());
 
@@ -18,29 +19,55 @@ app.get("/", (request, response) => {
 });
 
 // **** ROUTES ****
-app.get("/weather", async (request, response, next) => {
+app.get("/movies", async (request, response, next) => {
   try {
-    let lat = request.query.lat;
-    let lon = request.query.lon;
+    let city = request.query.city;
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${city}`;
+    let movieData = await axios.get(url);
 
-    let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=5&units=I`;
-
-    let forcastResults = await axios.get(url);
-
-    let weatherData = forcastResults.data.data.map((day) => {
-      return new Forecast(day);
-    });
-    response.status(200).send(weatherData);
+    let groomMovie = movieData.data.results;
+    let dataToSend = groomMovie.map((movie) => new Movie(movie));
+    response.status(200).send(dataToSend);
   } catch (error) {
     next(error);
   }
 });
 
-// **** FORECAST CLASS TO GROOM BULKY DATA ****
+app.get("/weather", async (request, response, next) => {
+  try {
+    let lat = request.query.lat;
+    let lon = request.query.lon;
+    let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=5&units=I`;
+    let weatherData = await axios.get(url);
+
+    let groomWeather = weatherData.data.data;
+
+    let dataToSend = groomWeather.map((day) => new Forecast(day));
+
+    response.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ***** Class to groom bulky data
+class Movie {
+  constructor(movieObj) {
+    this.title = movieObj.title;
+    this.overview = movieObj.overview;
+    this.vote_average = movieObj.vote_average;
+    this.vote_count = movieObj.vote_count;
+    this.popularity = movieObj.popularity;
+    this.release_date = movieObj.release_date;
+  }
+}
+
 class Forecast {
-  constructor(day) {
-    this.date = day.valid_date;
-    this.description = `Low of ${day.low_temp}, high of ${day.high_temp} with ${day.weather.description}`;
+  constructor(dayObj) {
+    this.date = dayObj.valid_date;
+    this.high_temp = dayObj.high_temp;
+    this.low_temp = dayObj.low_temp;
+    this.description = dayObj.weather.description;
   }
 }
 
