@@ -79,6 +79,16 @@ Finish time: 6:30
 
 Actual time needed to complete: 2 hours
 
+---
+
+Name of feature: \_\_Cache
+
+Estimate of time needed to complete: 3hrs
+
+Start time: 5:00
+Finish time: 6:42
+Actual time needed to complete: 2 hrs
+
 ## Credit and Collaborations
 
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
