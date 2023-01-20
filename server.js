@@ -1,37 +1,26 @@
 'use strict';
 
-// ** REQUIRES**
-const express = require('express');
 require('dotenv').config();
+const express = require('express');
 const cors = require('cors');
-
-const getMovies = require('./modules/movie.js');
-const getWeather = require('./modules/weather.js');
-
+const weather = require('./modules/weather.js');
 const app = express();
-
-// Middleware
+const PORT = process.env.PORT || 3002;
+const getMovies = require('./modules/movie');
 
 app.use(cors());
 
-// Define a port for server to run on with a back up
-
-const PORT = process.env.PORT || 3002;
-
-app.get('/', (request, response) => {
-  response.status(200).send('Welcome to my server');
-});
-
+app.get('/weather', weatherHandler);
 app.get('/movies', getMovies);
-app.get('/weather', getWeather);
 
-app.get('*', (request, response) => {
-  response.status(404).send('Error');
-});
+function weatherHandler(request, response) {
+  const { lat, lon } = request.query;
+  weather(lat, lon)
+    .then((summaries) => response.send(summaries))
+    .catch((error) => {
+      console.error(error);
+      response.status(200).send('Sorry. Something went wrong!');
+    });
+}
 
-app.use((error, request, response, next) => {
-  response.status(500).send(error.message);
-});
-
-// Server start
-app.listen(PORT, () => console.log(`Running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is up and running on Port ${PORT}`));
