@@ -66,3 +66,13 @@ Estimate of time needed to complete: 2hrs
 Start time: 940
 Finish time: 1140
 Actual time needed to complete: 2hrs
+
+Name of feature: lab 8/9
+
+Estimate of time needed to complete: 4 hours
+
+Start time: 430
+
+Finish time: 9
+
+Actual time needed to complete: 4hr 40mins hours
