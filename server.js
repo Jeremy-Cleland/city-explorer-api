@@ -22,6 +22,9 @@ app.get('/', (request, response) => {
   response.status(200).send('Welcome to my server');
 });
 
+app.get('/movies', getMovies);
+app.get('/weather', getWeather);
+
 app.get('*', (request, response) => {
   response.status(404).send('Error');
 });
